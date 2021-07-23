@@ -18,18 +18,16 @@
 */
 
 const gameBoard = (() => {
-  let _board = ["X", "O", "X", "X", "O", "X", "X", "O", "X"];
+  let _board = [];
 
-  /*
   const BOARD_SIZE = 9;
   for (let i = 0; i < BOARD_SIZE; i++) {
-    board.push("");
+    _board.push("");
   }
-  */
 
   const getCellSign = index => _board[index];
   const setCellSign = (index, sign) => (_board[index] = sign);
-  const reset = () => board.forEach((cell, index) => (_board[index] = ""));
+  const reset = () => _board.forEach((cell, index) => (_board[index] = ""));
 
   return { getCellSign, setCellSign, reset };
 })();
@@ -54,21 +52,49 @@ const displayController = (() => {
     for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
       const cellDiv = document.createElement("div");
       cellDiv.className = "cell";
+      cellDiv.setAttribute("data-index", i);
 
       gameBoardElement.appendChild(cellDiv);
     }
   };
 
   const _renderContents = () => {
-    const cells = document.querySelectorAll(".cell");
-
-    cells.forEach((cell, index) => {
+    const _cells = document.querySelectorAll(".cell");
+    _cells.forEach((cell, index) => {
       cell.textContent = gameBoard.getCellSign(index);
     });
   };
 
+  let nextPlayer = true;
+
+  const _addCellClickListener = () => {
+    const _cells = document.querySelectorAll(".cell");
+
+    _cells.forEach(cell =>
+      cell.addEventListener("click", () => {
+        if (!cell.textContent) {
+          if (nextPlayer) {
+            cell.textContent = player1.getSign();
+            gameBoard.setCellSign(
+              cell.getAttribute("data-index"),
+              player1.getSign()
+            );
+          } else {
+            cell.textContent = player2.getSign();
+            gameBoard.setCellSign(
+              cell.getAttribute("data-index"),
+              player2.getSign()
+            );
+          }
+          nextPlayer = !nextPlayer;
+        }
+      })
+    );
+  };
+
   _createGameBoard();
   _renderContents();
+  _addCellClickListener();
 })();
 
 displayController;
@@ -76,14 +102,8 @@ displayController;
 const player1 = playerFactory();
 const player2 = playerFactory();
 
-console.log("playerSign before set is " + player1.getSign());
-console.log("playerSign before set is " + player2.getSign());
-
 player1.setSign("X");
 player2.setSign("O");
-
-console.log("player1 sign is " + player1.getSign());
-console.log("player2 sign is " + player2.getSign());
 
 console.log(gameBoard.getCellSign(3));
 gameBoard.setCellSign(3, "X");
