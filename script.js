@@ -18,7 +18,7 @@
 */
 
 const gameBoard = (() => {
-  let board = ["X", "O", "X", "X", "O", "X", "X", "O", "X"];
+  let _board = ["X", "O", "X", "X", "O", "X", "X", "O", "X"];
 
   /*
   const BOARD_SIZE = 9;
@@ -27,50 +27,48 @@ const gameBoard = (() => {
   }
   */
 
-  const getCellSign = index => board[index];
-  const setCellSign = (index, sign) => (board[index] = sign);
-  const reset = () => board.forEach((cell, index) => (board[index] = ""));
+  const getCellSign = index => _board[index];
+  const setCellSign = (index, sign) => (_board[index] = sign);
+  const reset = () => board.forEach((cell, index) => (_board[index] = ""));
 
   return { getCellSign, setCellSign, reset };
 })();
 
 const playerFactory = () => {
-  let playerSign;
+  let _playerSign;
 
-  const getSign = () => playerSign;
-  const setSign = sign => (playerSign = sign);
+  const getSign = () => _playerSign;
+  const setSign = sign => (_playerSign = sign);
 
   return { getSign, setSign };
 };
 
 const displayController = (() => {
-  // LATER: Add listener for the grid
+  const _createGameBoard = () => {
+    const gameBoardElement = document.querySelector(".game-board");
 
-  const gameBoardElement = document.querySelector(".game-board");
+    const GRID_SIZE = 3;
+    gameBoardElement.style.gridTemplateRows = `repeat(${GRID_SIZE}, 1fr)`;
+    gameBoardElement.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
 
-  const GRID_SIZE = 3;
+    for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+      const cellDiv = document.createElement("div");
+      cellDiv.className = "cell";
 
-  gameBoardElement.style.gridTemplateRows = `repeat(${GRID_SIZE}, 1fr)`;
-  gameBoardElement.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 1fr)`;
+      gameBoardElement.appendChild(cellDiv);
+    }
+  };
 
-  for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-    const cellDiv = document.createElement("div");
-    cellDiv.className = "cell";
+  const _renderContents = () => {
+    const cells = document.querySelectorAll(".cell");
 
-    gameBoardElement.appendChild(cellDiv);
-  }
+    cells.forEach((cell, index) => {
+      cell.textContent = gameBoard.getCellSign(index);
+    });
+  };
 
-  // TASK: render the contents of the array to the webpage
-  // Get each cell and change the text content
-  // query all cells
-  // for each cell, change the text content with the corresponding value in the array
-  // stylize
-  const cells = document.querySelectorAll(".cell");
-
-  // might need to convert cells into an array
-  cells.forEach((cell, index) => {
-    cell.textContent = gameBoard.getCellSign(index);
-  });
+  _createGameBoard();
+  _renderContents();
 })();
 
 displayController;
