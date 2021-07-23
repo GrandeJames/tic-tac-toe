@@ -1,22 +1,3 @@
-// Create the gameBoard module
-/*
-    Add a gameBoard array which consists of the Xs and Os there should be 9
-
-    Create the grid for the gameboard 3x3
-        Get the gameboard element
-        Set the template rows style (3 with each a size of 1fr)
-        Set the template columns style (3 with each a size of 1fr)
-    
-        Then use for loop for the total amount of cells
-            Create a div and set its class to cell
-            Add that div to the gameboard
-            Style the cell in css
-
-    Add the click listener for each cell
-        when clicked it should set the textContent to either x or o
-        at the index add the letter to the index in the array
-*/
-
 const gameBoard = (() => {
   let _board = [];
 
@@ -67,6 +48,11 @@ const displayController = (() => {
 
   let nextPlayer = true;
 
+  const setPlayerContent = (player, cell) => {
+    cell.textContent = player.getSign();
+    gameBoard.setCellSign(cell.getAttribute("data-index"), player.getSign());
+  };
+
   const _addCellClickListener = () => {
     const _cells = document.querySelectorAll(".cell");
 
@@ -74,23 +60,20 @@ const displayController = (() => {
       cell.addEventListener("click", () => {
         if (!cell.textContent) {
           if (nextPlayer) {
-            cell.textContent = player1.getSign();
-            gameBoard.setCellSign(
-              cell.getAttribute("data-index"),
-              player1.getSign()
-            );
+            setPlayerContent(player1, cell);
           } else {
-            cell.textContent = player2.getSign();
-            gameBoard.setCellSign(
-              cell.getAttribute("data-index"),
-              player2.getSign()
-            );
+            setPlayerContent(player2, cell);
           }
           nextPlayer = !nextPlayer;
         }
       })
     );
   };
+
+  // TASK: CHECK WHEN THE GAME IS OVER
+  // Game is over when
+  // everything in the array is true
+  // 3 in a row
 
   _createGameBoard();
   _renderContents();
