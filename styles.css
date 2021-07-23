@@ -41,7 +41,7 @@ h2 {
   background-color: rgb(170, 170, 170);
 }
 
-.gameboard {
+.game-board {
   display: grid;
   min-width: 300px;
   min-height: 300px;
