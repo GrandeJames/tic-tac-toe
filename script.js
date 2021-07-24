@@ -4,9 +4,6 @@ const gameController = (() => {
 
   let _player1Choosing = true;
   let _isGameOver = false;
-  // When someone wins OR it's a tie
-  //  // isGameOver = true
-  //  // if gameboard is clicked and isGameOver is true, reset and set isGameOver to false
 
   const getPlayer1 = () => _player1;
   const getPlayer2 = () => _player2;
