@@ -3,9 +3,15 @@ const gameController = (() => {
   const _player2 = player("O");
 
   let _player1Choosing = true;
+  let _isGameOver = false;
+  // When someone wins OR it's a tie
+  //  // isGameOver = true
+  //  // if gameboard is clicked and isGameOver is true, reset and set isGameOver to false
 
   const getPlayer1 = () => _player1;
   const getPlayer2 = () => _player2;
+
+  const isGameOver = () => _isGameOver;
 
   const toggleNextPlayer = cell => {
     if (_player1Choosing) {
@@ -19,7 +25,7 @@ const gameController = (() => {
   const announceGameResult = () => {
     if (gameBoard.getBoard().every(element => element)) {
       displayController.setMessage("It's a tie!");
-      return;
+      _isGameOver = true;
     }
 
     let winCombos = gameBoard.getWinCombos();
@@ -27,9 +33,11 @@ const gameController = (() => {
     for (let i = 0; i < winCombos.length; i++) {
       if (_isWinner(winCombos[i], _player1.getSign())) {
         displayController.setMessage("Player 1 won!");
+        _isGameOver = true;
         break;
       } else if (_isWinner(winCombos[i], _player2.getSign())) {
         displayController.setMessage("Player 2 won!");
+        _isGameOver = true;
         break;
       }
     }
@@ -40,9 +48,13 @@ const gameController = (() => {
   };
 
   const reset = () => {
-    // RESET THE CELLS: REMOVE ITS TEXT CONTENT
-    // REMOVE MESSAGE IF THERE IS
-    // RESET THE NEXT PLAYER
+    gameBoard.resetBoard();
+
+    displayController.resetMarks();
+    displayController.resetMessage();
+
+    _player1Choosing = true;
+    _isGameOver = false;
   };
 
   return {
@@ -50,6 +62,8 @@ const gameController = (() => {
     getPlayer2,
     announceGameResult,
     toggleNextPlayer,
+    reset,
+    isGameOver,
   };
 })();
 
@@ -62,6 +76,7 @@ function player(sign) {
 const displayController = (() => {
   _createGameBoard();
   _addCellClickListener();
+  _addRestartClickListener();
 
   function _createGameBoard() {
     const gameBoardElement = document.querySelector(".game-board");
@@ -88,16 +103,24 @@ const displayController = (() => {
   }
 
   function _addCellClickListener() {
-    const cells = document.querySelectorAll(".cell");
-
-    cells.forEach(cell =>
+    document.querySelectorAll(".cell").forEach(cell =>
       cell.addEventListener("click", () => {
+        if (gameController.isGameOver()) {
+          gameController.reset();
+          return;
+        }
         if (!cell.textContent) {
           gameController.toggleNextPlayer(cell);
           gameController.announceGameResult();
         }
       })
     );
+  }
+
+  function _addRestartClickListener() {
+    document
+      .querySelector("#restart-button")
+      .addEventListener("click", () => gameController.reset());
   }
 
   const setMark = (cell, sign) => {
@@ -109,7 +132,15 @@ const displayController = (() => {
     document.querySelector(".message").textContent = text;
   };
 
-  return { setMessage, setMark };
+  const resetMarks = () => {
+    document.querySelectorAll(".cell").forEach(cell => (cell.textContent = ""));
+  };
+
+  const resetMessage = () => {
+    document.querySelector(".message").textContent = "";
+  };
+
+  return { setMessage, setMark, resetMarks, resetMessage };
 })();
 
 const gameBoard = (() => {
@@ -125,7 +156,8 @@ const gameBoard = (() => {
   }
   const getCellSign = index => _board[index];
   const setCellSign = (index, sign) => (_board[index] = sign);
-  const reset = () => _board.forEach((cell, index) => (_board[index] = ""));
+  const resetBoard = () =>
+    _board.forEach((cell, index) => (_board[index] = ""));
   const getBoard = () => _board;
   const getWinCombos = () => [
     // Rows
@@ -141,7 +173,7 @@ const gameBoard = (() => {
     [2, 4, 6],
   ];
 
-  return { getCellSign, setCellSign, reset, getBoard, getWinCombos };
+  return { getCellSign, setCellSign, resetBoard, getBoard, getWinCombos };
 })();
 
 gameController;
