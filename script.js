@@ -9,17 +9,15 @@ const gameBoard = (() => {
   const getCellSign = index => _board[index];
   const setCellSign = (index, sign) => (_board[index] = sign);
   const reset = () => _board.forEach((cell, index) => (_board[index] = ""));
+  const getBoard = () => _board;
 
-  return { getCellSign, setCellSign, reset };
+  return { getCellSign, setCellSign, reset, getBoard };
 })();
 
-const playerFactory = () => {
-  let _playerSign;
+const Player = sign => {
+  const getSign = () => sign;
 
-  const getSign = () => _playerSign;
-  const setSign = sign => (_playerSign = sign);
-
-  return { getSign, setSign };
+  return { getSign };
 };
 
 const displayController = (() => {
@@ -53,43 +51,85 @@ const displayController = (() => {
     gameBoard.setCellSign(cell.getAttribute("data-index"), player.getSign());
   };
 
+  const winCombos = [
+    // Rows
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    // Columns
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    // Diagonals
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const _setMessage = text => {
+    const message = document.querySelector(".message");
+    message.textContent = text;
+  };
+
   const _addCellClickListener = () => {
     const _cells = document.querySelectorAll(".cell");
+    let isGameOver = false;
 
     _cells.forEach(cell =>
       cell.addEventListener("click", () => {
         if (!cell.textContent) {
-          if (nextPlayer) {
-            setPlayerContent(player1, cell);
-          } else {
-            setPlayerContent(player2, cell);
-          }
+          nextPlayer
+            ? setPlayerContent(gameController.getPlayer1(), cell)
+            : setPlayerContent(gameController.getPlayer2(), cell);
           nextPlayer = !nextPlayer;
+
+          if (gameBoard.getBoard().every(element => element)) {
+            _setMessage("It's a tie!");
+            return;
+          }
+
+          for (let i = 0; i < winCombos.length; i++) {
+            if (
+              winCombos[i].every(
+                innerArrVal =>
+                  gameBoard.getBoard()[innerArrVal] ===
+                  gameController.getPlayer1().getSign()
+              )
+            ) {
+              _setMessage("Player 1 won!");
+              break;
+            } else if (
+              winCombos[i].every(
+                innerArrVal =>
+                  gameBoard.getBoard()[innerArrVal] ===
+                  gameController.getPlayer2().getSign()
+              )
+            ) {
+              _setMessage("Player 2 won!");
+              break;
+            }
+          }
         }
       })
     );
   };
 
-  // TASK: CHECK WHEN THE GAME IS OVER
-  // Game is over when
-  // everything in the array is true
-  // 3 in a row
+  const reset = () => {};
 
   _createGameBoard();
   _renderContents();
   _addCellClickListener();
 })();
 
-displayController;
+const gameController = (() => {
+  displayController;
 
-const player1 = playerFactory();
-const player2 = playerFactory();
+  const _player1 = Player("X");
+  const _player2 = Player("O");
 
-player1.setSign("X");
-player2.setSign("O");
+  const getPlayer1 = () => _player1;
+  const getPlayer2 = () => _player2;
 
-console.log(gameBoard.getCellSign(3));
-gameBoard.setCellSign(3, "X");
-console.log(gameBoard.getCellSign(3));
-gameBoard.reset();
-console.log(gameBoard.getCellSign(3));
+  return { getPlayer1, getPlayer2 };
+})();
+
+gameController;
