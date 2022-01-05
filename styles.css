@@ -1,28 +1,20 @@
-/* Layout */
-
 * {
-  box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-header {
-  display: flex;
-  justify-content: center;
-  margin: 2rem 0 5rem 0;
+header,
+footer,
+.cell {
+  text-align: center;
 }
 
-footer {
-  display: flex;
-  justify-content: center;
-  margin: 3rem 0;
+header {
+  margin: 2rem 0 5rem 0;
 }
 
 h1 {
@@ -33,34 +25,30 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.message-container {
-  display: flex;
-  place-items: center;
-  height: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
 }
 
 .message {
   font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.game-board,
+.cell {
+  border: 1px solid black;
 }
 
 .game-board {
   display: grid;
-  min-width: 300px;
-  min-height: 300px;
-  border: 1px solid black;
+  width: 300px;
+  height: 300px;
 }
 
 .cell {
-  border: 1px solid black;
-  display: flex;
-  place-content: center;
   font-size: 5rem;
 }
 
-#restart-button {
+.restart-button {
   width: 5rem;
   height: 2rem;
   background-color: white;

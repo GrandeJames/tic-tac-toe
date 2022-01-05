@@ -116,7 +116,7 @@ const displayController = (() => {
 
   function _addRestartClickListener() {
     document
-      .querySelector("#restart-button")
+      .querySelector(".restart-button")
       .addEventListener("click", () => gameController.reset());
   }
 
